@@ -40,6 +40,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let client = Client::new();
 
     let tools = vec![Tool::Function(FunctionTool {
+        r#async: None,
         defer_loading: None,
         allowed_callers: None,
         output_schema: None,
@@ -110,7 +111,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // And then the function call's result.
     input_items.push(InputItem::Item(Item::FunctionCallOutput(
         FunctionCallOutputItemParam {
-            call_id: function_call.call_id.clone(),
+            call_id: Some(function_call.call_id.clone()),
+            name: None,
+            namespace: None,
             output: FunctionCallOutput::Text(function_result),
             id: None,
             status: None,

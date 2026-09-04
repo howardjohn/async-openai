@@ -259,6 +259,8 @@ pub struct CostsResult {
     pub line_item: Option<String>,
     /// When `group_by=line_item`, this field provides the quantity of the grouped costs result.
     pub quantity: Option<f64>,
+    /// Unit represented by `quantity`, such as `tokens`, `duration_seconds`, or `images`.
+    pub quantity_unit: Option<String>,
     /// When `group_by=project_id`, this field provides the project ID of the grouped costs result.
     pub project_id: Option<String>,
     /// When `group_by=api_key_id`, this field provides the API Key ID of the grouped costs result.

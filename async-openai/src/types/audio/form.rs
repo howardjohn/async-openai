@@ -22,6 +22,18 @@ impl AsyncTryFrom<CreateTranscriptionRequest> for reqwest::multipart::Form {
             form = form.text("language", language);
         }
 
+        if let Some(languages) = request.languages {
+            for language in languages {
+                form = form.text("languages[]", language);
+            }
+        }
+
+        if let Some(keywords) = request.keywords {
+            for keyword in keywords {
+                form = form.text("keywords[]", keyword);
+            }
+        }
+
         if let Some(prompt) = request.prompt {
             form = form.text("prompt", prompt);
         }

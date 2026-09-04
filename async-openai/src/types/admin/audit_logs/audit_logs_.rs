@@ -143,6 +143,8 @@ pub enum AuditLogEventType {
     TenantWorkloadIdentityBindingCreated,
     #[serde(rename = "tenant.workload_identity.principal.provisioned")]
     TenantWorkloadIdentityPrincipalProvisioned,
+    #[serde(rename = "tenant.workload_identity.access_token.issued")]
+    TenantWorkloadIdentityAccessTokenIssued,
     #[serde(rename = "tenant.admin_api_key.created")]
     TenantAdminApiKeyCreated,
     #[serde(rename = "tenant.admin_api_key.updated")]
@@ -151,6 +153,10 @@ pub enum AuditLogEventType {
     TenantAdminApiKeyDeleted,
     #[serde(rename = "tenant.project_api_key.created")]
     TenantProjectApiKeyCreated,
+    #[serde(rename = "tenant.trusted_access.business_verification.started")]
+    TenantTrustedAccessBusinessVerificationStarted,
+    #[serde(rename = "tenant.trusted_access.application.submitted")]
+    TenantTrustedAccessApplicationSubmitted,
     #[serde(rename = "tenant.chatgpt_access_token.revoked")]
     TenantChatgptAccessTokenRevoked,
     #[serde(rename = "tenant.migration.completed")]
@@ -255,6 +261,8 @@ pub enum AuditLogEventType {
     TenantResourceAccessUpdated,
     #[serde(rename = "tenant.resource_access.deleted")]
     TenantResourceAccessDeleted,
+    #[serde(rename = "tenant.ads_account.onboarding.redemption")]
+    TenantAdsAccountOnboardingRedemption,
     #[serde(rename = "tenant.session_policy.created")]
     TenantSessionPolicyCreated,
     #[serde(rename = "tenant.session_policy.updated")]

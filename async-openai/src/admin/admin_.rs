@@ -1,6 +1,6 @@
 use crate::{
     config::Config, AdminAPIKeys, AuditLogs, Certificates, Client, DataRetention, Groups, Invites,
-    Projects, Roles, SpendAlerts, Usage, Users,
+    Projects, Roles, SafetyAlerts, SpendAlerts, SpendLimits, Usage, Users,
 };
 
 /// Admin group for all administration APIs.
@@ -67,5 +67,15 @@ impl<'c, C: Config> Admin<'c, C> {
     /// To manage organization spend alerts.
     pub fn spend_alerts(&self) -> SpendAlerts<'_, C> {
         SpendAlerts::new(self.client)
+    }
+
+    /// Manage the organization's hard spend limit.
+    pub fn spend_limit(&self) -> SpendLimits<'_, C> {
+        SpendLimits::new(self.client)
+    }
+
+    /// Retrieve approved safety alerts.
+    pub fn safety_alerts(&self) -> SafetyAlerts<'_, C> {
+        SafetyAlerts::new(self.client)
     }
 }

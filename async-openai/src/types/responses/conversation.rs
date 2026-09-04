@@ -11,7 +11,8 @@ use crate::{
         InputFileContent, InputImageContent, InputItem, InputTextContent, LocalShellToolCall,
         LocalShellToolCallOutput, MCPApprovalRequest, MCPApprovalResponse, MCPListTools,
         MCPToolCall, MessagePhase, OutputTextContent, PromptCacheBreakpointConfig, ReasoningItem,
-        ReasoningTextContent, RefusalContent, ToolSearchCall, ToolSearchOutput, WebSearchToolCall,
+        ReasoningTextContent, RefusalContent, ResponseConfigurationUpdate, ToolSearchCall,
+        ToolSearchOutput, WebSearchToolCall,
     },
 };
 
@@ -186,6 +187,7 @@ pub enum ConversationItem {
     ComputerCallOutput(ComputerToolCallOutputResource),
     ToolSearchCall(ToolSearchCall),
     ToolSearchOutput(ToolSearchOutput),
+    ConfigurationUpdate(ResponseConfigurationUpdate),
     Reasoning(ReasoningItem),
     Compaction(CompactionBody),
     CodeInterpreterCall(CodeInterpreterToolCall),

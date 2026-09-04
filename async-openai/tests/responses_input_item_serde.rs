@@ -1,12 +1,14 @@
 #![cfg(feature = "response-types")]
 
 use async_openai::types::responses::{
-    EasyInputContent, ImageDetail, InputContent, InputItem, InputRole, InputTextContent,
-    InputTokenDetails, Item, MessageItem, MessageType, OutputItem, ProgramToolCallCaller,
-    ProgrammaticToolCallingParam, PromptCacheBreakpointConfig, PromptCacheBreakpointMode,
-    ResponseStreamEvent, ResponseTextParam, Role, TextResponseFormatConfiguration, Tool,
-    ToolCallCaller, WebSearchApproximateLocation, WebSearchApproximateLocationType,
-    WebSearchToolCallStatus,
+    CreateResponseArgs, EasyInputContent, FunctionToolArgs, ImageDetail, InputContent, InputItem,
+    InputParam, InputRole, InputTextContent, InputTokenDetails, Item, MessageItem, MessageType,
+    OutputItem, ProgramToolCallCaller, ProgrammaticToolCallingParam, PromptCacheBreakpointConfig,
+    PromptCacheBreakpointMode, ResponseConfigurationUpdateItemParam,
+    ResponseConfigurationUpdateReasoning, ResponseSteerRequiredInput, ResponseStreamEvent,
+    ResponseTextParam, ResponsesClientEvent, ResponsesWebSocketControlEvent, Role,
+    TextResponseFormatConfiguration, Tool, ToolCallCaller, WebSearchApproximateLocation,
+    WebSearchApproximateLocationType, WebSearchToolCallStatus,
 };
 use serde_json::json;
 
@@ -218,4 +220,78 @@ fn programmatic_calling_and_prompt_cache_types_serialize_canonically() {
             "prompt_cache_breakpoint": {"mode": "explicit"}
         })
     );
+}
+
+#[test]
+fn astra_async_tool_and_configuration_update_serialize_canonically() {
+    let function = FunctionToolArgs::default()
+        .name("lookup")
+        .r#async(true)
+        .build()
+        .unwrap();
+    let update = Item::ConfigurationUpdate(ResponseConfigurationUpdateItemParam {
+        id: None,
+        reasoning: Some(ResponseConfigurationUpdateReasoning {
+            effort: Some(async_openai::types::responses::ReasoningEffort::High),
+        }),
+    });
+    let request = CreateResponseArgs::default()
+        .model("gpt-6-astra")
+        .input(InputParam::Items(vec![InputItem::Item(update)]))
+        .tools(vec![Tool::Function(function)])
+        .build()
+        .unwrap();
+
+    assert_eq!(
+        serde_json::to_value(request).unwrap(),
+        json!({
+            "model": "gpt-6-astra",
+            "input": [{
+                "type": "configuration_update",
+                "reasoning": {"effort": "high"}
+            }],
+            "tools": [{"type": "function", "name": "lookup", "async": true}]
+        })
+    );
+}
+
+#[test]
+fn astra_websocket_steering_events_follow_the_spec_shape() {
+    let client_event: ResponsesClientEvent = serde_json::from_value(json!({
+        "type": "response.steer",
+        "previous_response_id": "resp_123",
+        "input": "Prioritize the database rollout."
+    }))
+    .unwrap();
+    assert_eq!(
+        serde_json::to_value(client_event).unwrap(),
+        json!({
+            "type": "response.steer",
+            "previous_response_id": "resp_123",
+            "input": "Prioritize the database rollout."
+        })
+    );
+
+    let pending: ResponsesWebSocketControlEvent = serde_json::from_value(json!({
+        "type": "response.steer.pending",
+        "sequence_number": 10,
+        "steer": {"id": "steer_456", "previous_response_id": "resp_123"},
+        "reason": "waiting_for_required_input",
+        "required_input": [{
+            "type": "function_call_output",
+            "call_id": "call_789",
+            "name": "lookup"
+        }]
+    }))
+    .unwrap();
+    match pending {
+        ResponsesWebSocketControlEvent::ResponseSteerPending(event) => assert_eq!(
+            event.required_input,
+            vec![ResponseSteerRequiredInput::FunctionCallOutput {
+                call_id: "call_789".into(),
+                name: "lookup".into(),
+            }]
+        ),
+        other => panic!("expected response.steer.pending, got {other:?}"),
+    }
 }

@@ -48,6 +48,7 @@ async fn run_non_streaming() -> Result<(), Box<dyn Error>> {
     let client = Client::new();
 
     let tools = vec![Tool::Function(FunctionTool {
+        r#async: None,
         defer_loading: None,
         allowed_callers: None,
         output_schema: None,
@@ -136,7 +137,9 @@ async fn run_non_streaming() -> Result<(), Box<dyn Error>> {
     // Add the function call output back to the conversation
     input_items.push(InputItem::Item(Item::FunctionCallOutput(
         FunctionCallOutputItemParam {
-            call_id: function_call_request.call_id.clone(),
+            call_id: Some(function_call_request.call_id.clone()),
+            name: None,
+            namespace: None,
             output: FunctionCallOutput::Text(function_result),
             id: None,
             status: None,
@@ -167,6 +170,7 @@ async fn run_streaming() -> Result<(), Box<dyn Error>> {
     let client = Client::new();
 
     let tools = vec![Tool::Function(FunctionTool {
+        r#async: None,
         defer_loading: None,
         allowed_callers: None,
         output_schema: None,
@@ -264,6 +268,7 @@ async fn run_streaming() -> Result<(), Box<dyn Error>> {
 
                             // Create the function call request
                             function_call_request = Some(FunctionToolCall {
+                                r#async: None,
                                 namespace: None,
                                 name: name.clone(),
                                 arguments,
@@ -319,7 +324,9 @@ async fn run_streaming() -> Result<(), Box<dyn Error>> {
     // Add the function call output back to the conversation
     input_items.push(InputItem::Item(Item::FunctionCallOutput(
         FunctionCallOutputItemParam {
-            call_id: function_call_request.call_id.clone(),
+            call_id: Some(function_call_request.call_id.clone()),
+            name: None,
+            namespace: None,
             output: FunctionCallOutput::Text(function_result),
             id: None,
             status: None,

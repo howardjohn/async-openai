@@ -925,6 +925,8 @@ impl From<FunctionToolCallOutputResource> for FunctionCallOutputItemParam {
     fn from(r: FunctionToolCallOutputResource) -> Self {
         FunctionCallOutputItemParam {
             call_id: r.call_id,
+            name: r.name,
+            namespace: r.namespace,
             output: r.output,
             id: Some(r.id),
             status: Some(r.status.into()),

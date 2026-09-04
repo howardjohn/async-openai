@@ -25,6 +25,9 @@ pub struct PromptCacheOptionsParam {
     pub ttl: Option<PromptCacheTtl>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub mode: Option<PromptCacheMode>,
+    /// The ID of a response to compare when diagnosing prompt cache reuse.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub comparison_response_id: Option<String>,
 }
 
 /// Prompt-caching options applied to a response.
@@ -33,6 +36,9 @@ pub struct PromptCacheOptionsParam {
 pub struct PromptCacheOptions {
     pub ttl: PromptCacheTtl,
     pub mode: PromptCacheMode,
+    /// The response used for prompt-cache comparison diagnostics, when requested.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub comparison_response_id: Option<String>,
 }
 
 /// Marks the exact end of a reusable prompt prefix.

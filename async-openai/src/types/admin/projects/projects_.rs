@@ -3,6 +3,35 @@ use crate::types::admin::groups::GroupType;
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
+/// Data residency configuration for an organization project.
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+pub enum PublicProjectResidency {
+    #[serde(rename = "GLOBAL")]
+    Global,
+    #[serde(rename = "US_STORAGE_PROCESSING")]
+    UsStorageProcessing,
+    #[serde(rename = "EU_STORAGE_PROCESSING")]
+    EuStorageProcessing,
+    #[serde(rename = "JP_STORAGE")]
+    JpStorage,
+    #[serde(rename = "KR_STORAGE")]
+    KrStorage,
+    #[serde(rename = "CA_STORAGE")]
+    CaStorage,
+    #[serde(rename = "SG_STORAGE")]
+    SgStorage,
+    #[serde(rename = "IN_STORAGE")]
+    InStorage,
+    #[serde(rename = "AU_STORAGE")]
+    AuStorage,
+    #[serde(rename = "GB_STORAGE")]
+    GbStorage,
+    #[serde(rename = "AE_STORAGE")]
+    AeStorage,
+    #[serde(rename = "AE_STORAGE_PROCESSING")]
+    AeStorageProcessing,
+}
+
 /// Represents an individual project.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Project {
@@ -21,6 +50,9 @@ pub struct Project {
     /// The external key associated with the project.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub external_key_id: Option<String>,
+    /// The project's data residency configuration.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub residency: Option<PublicProjectResidency>,
 }
 
 /// A list of Project objects.
@@ -49,6 +81,9 @@ pub struct ProjectCreateRequest {
     /// to review the functionality and limitations of setting this field.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub geography: Option<String>,
+    /// Create the project with this data residency configuration.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub residency: Option<PublicProjectResidency>,
     /// External key ID to associate with the project.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub external_key_id: Option<String>,

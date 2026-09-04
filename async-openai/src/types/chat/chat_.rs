@@ -668,6 +668,7 @@ pub enum ServiceTier {
     Flex,
     Scale,
     Priority,
+    Fast,
 }
 
 /// Constrains the verbosity of the model's response. Lower values will result in more concise responses, while higher values will result in more verbose responses. Currently supported values are `low`, `medium`, and `high`.
@@ -1119,6 +1120,9 @@ pub struct CreateChatCompletionResponse {
     /// The object type, which is always `chat.completion`.
     pub object: String,
     pub usage: Option<CompletionUsage>,
+    /// Developer-defined metadata associated with the completion.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<Metadata>,
 }
 
 /// Parsed server side events stream until an \[DONE\] is received from server.
@@ -1220,6 +1224,9 @@ pub struct CreateChatCompletionStreamResponse {
     /// An optional field that will only be present when you set `stream_options: {"include_usage": true}` in your request.
     /// When present, it contains a null value except for the last chunk which contains the token usage statistics for the entire request.
     pub usage: Option<CompletionUsage>,
+    /// Padding used to normalize streamed payload sizes when obfuscation is enabled.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub obfuscation: Option<String>,
 }
 
 /// An object representing a list of Chat Completions.

@@ -58,6 +58,8 @@ use crate::Chat;
 use crate::Completions;
 #[cfg(feature = "container")]
 use crate::Containers;
+#[cfg(feature = "provenance")]
+use crate::ContentProvenance;
 #[cfg(feature = "responses")]
 use crate::Conversations;
 #[cfg(feature = "embedding")]
@@ -217,6 +219,12 @@ impl<C: Config> Client<C> {
     #[cfg(feature = "moderation")]
     pub fn moderations(&self) -> Moderations<'_, C> {
         Moderations::new(self)
+    }
+
+    /// To check content for supported OpenAI provenance signals.
+    #[cfg(feature = "provenance")]
+    pub fn content_provenance(&self) -> ContentProvenance<'_, C> {
+        ContentProvenance::new(self)
     }
 
     /// To call [Files] group related APIs using this client.
@@ -751,6 +759,8 @@ async fn read_error_response(response: Response) -> OpenAIError {
                 r#type: None,
                 param: None,
                 code: None,
+                headers: None,
+                misalignment: None,
             },
         });
     }

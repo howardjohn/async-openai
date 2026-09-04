@@ -75,6 +75,8 @@ pub enum ImageResponseFormat {
 pub enum ImageModel {
     #[serde(rename = "gpt-image-2")]
     GptImage2,
+    #[serde(rename = "gpt-image-2-2026-04-21")]
+    GptImage2_20260421,
     #[serde(rename = "gpt-image-1")]
     GptImage1,
     #[serde(rename = "gpt-image-1.5")]

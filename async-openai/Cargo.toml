@@ -41,6 +41,7 @@ file = ["file-types", "_api"]
 upload = ["upload-types", "_api"]
 model = ["model-types", "_api"]
 moderation = ["moderation-types", "_api"]
+provenance = ["provenance-types", "_api"]
 # end - Platform APIs
 vectorstore = ["vectorstore-types", "_api"]
 chatkit = ["chatkit-types", "_api"]
@@ -68,6 +69,7 @@ file-types = ["dep:derive_builder", "dep:bytes"]
 upload-types = ["dep:derive_builder", "dep:bytes", "file-types"]
 model-types = ["dep:derive_builder"]
 moderation-types = ["dep:derive_builder"]
+provenance-types = ["dep:bytes"]
 vectorstore-types = ["dep:derive_builder"]
 chatkit-types = ["dep:derive_builder"]
 container-types = ["dep:derive_builder", "dep:bytes"]
@@ -94,6 +96,7 @@ types = [
     "upload-types",
     "model-types",
     "moderation-types",
+    "provenance-types",
     "vectorstore-types",
     "chatkit-types",
     "container-types",
@@ -120,6 +123,7 @@ full = [
     "upload",
     "model",
     "moderation",
+    "provenance",
     "vectorstore",
     "chatkit",
     "container",

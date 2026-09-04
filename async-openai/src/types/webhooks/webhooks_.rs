@@ -230,6 +230,36 @@ pub struct SipHeader {
     pub value: String,
 }
 
+/// Sent when an incoming API SIP session is available for Live acceptance.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct WebhookLiveCallIncoming {
+    pub created_at: u64,
+    pub id: String,
+    pub data: WebhookLiveCallData,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub object: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct WebhookLiveCallData {
+    pub session_id: String,
+    pub sip_headers: Vec<SipHeader>,
+}
+
+/// Sent when an approved safety alert is available.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct WebhookSafetyAlertCreated {
+    pub created_at: u64,
+    pub id: String,
+    pub data: WebhookSafetyAlertData,
+    pub object: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct WebhookSafetyAlertData {
+    pub id: String,
+}
+
 /// Sent when a background response has been cancelled.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct WebhookResponseCancelled {
@@ -343,6 +373,15 @@ pub enum WebhookEvent {
     #[serde(rename = "realtime.call.incoming")]
     RealtimeCallIncoming(WebhookRealtimeCallIncoming),
 
+    #[serde(rename = "live.call.incoming")]
+    LiveCallIncoming(WebhookLiveCallIncoming),
+
+    #[serde(rename = "safety.alert.created")]
+    SafetyAlertCreated(WebhookSafetyAlertCreated),
+
+    #[serde(rename = "safety.org_alert.created")]
+    SafetyOrgAlertCreated(WebhookSafetyAlertCreated),
+
     #[serde(rename = "response.cancelled")]
     ResponseCancelled(WebhookResponseCancelled),
 
@@ -396,6 +435,8 @@ impl_event_type! {
     WebhookFineTuningJobFailed => "fine_tuning.job.failed",
     WebhookFineTuningJobSucceeded => "fine_tuning.job.succeeded",
     WebhookRealtimeCallIncoming => "realtime.call.incoming",
+    WebhookLiveCallIncoming => "live.call.incoming",
+    WebhookSafetyAlertCreated => "safety.alert.created",
     WebhookResponseCancelled => "response.cancelled",
     WebhookResponseCompleted => "response.completed",
     WebhookResponseFailed => "response.failed",
@@ -416,6 +457,8 @@ impl_event_id! {
     WebhookFineTuningJobFailed,
     WebhookFineTuningJobSucceeded,
     WebhookRealtimeCallIncoming,
+    WebhookLiveCallIncoming,
+    WebhookSafetyAlertCreated,
     WebhookResponseCancelled,
     WebhookResponseCompleted,
     WebhookResponseFailed,
@@ -438,6 +481,9 @@ impl crate::traits::EventType for WebhookEvent {
             WebhookEvent::FineTuningJobFailed(e) => e.event_type(),
             WebhookEvent::FineTuningJobSucceeded(e) => e.event_type(),
             WebhookEvent::RealtimeCallIncoming(e) => e.event_type(),
+            WebhookEvent::LiveCallIncoming(e) => e.event_type(),
+            WebhookEvent::SafetyAlertCreated(_) => "safety.alert.created",
+            WebhookEvent::SafetyOrgAlertCreated(_) => "safety.org_alert.created",
             WebhookEvent::ResponseCancelled(e) => e.event_type(),
             WebhookEvent::ResponseCompleted(e) => e.event_type(),
             WebhookEvent::ResponseFailed(e) => e.event_type(),
@@ -461,6 +507,10 @@ impl crate::traits::EventId for WebhookEvent {
             WebhookEvent::FineTuningJobFailed(e) => e.event_id(),
             WebhookEvent::FineTuningJobSucceeded(e) => e.event_id(),
             WebhookEvent::RealtimeCallIncoming(e) => e.event_id(),
+            WebhookEvent::LiveCallIncoming(e) => e.event_id(),
+            WebhookEvent::SafetyAlertCreated(e) | WebhookEvent::SafetyOrgAlertCreated(e) => {
+                e.event_id()
+            }
             WebhookEvent::ResponseCancelled(e) => e.event_id(),
             WebhookEvent::ResponseCompleted(e) => e.event_id(),
             WebhookEvent::ResponseFailed(e) => e.event_id(),
@@ -484,6 +534,10 @@ impl WebhookEvent {
             WebhookEvent::FineTuningJobFailed(w) => w.created_at,
             WebhookEvent::FineTuningJobSucceeded(w) => w.created_at,
             WebhookEvent::RealtimeCallIncoming(w) => w.created_at,
+            WebhookEvent::LiveCallIncoming(w) => w.created_at,
+            WebhookEvent::SafetyAlertCreated(w) | WebhookEvent::SafetyOrgAlertCreated(w) => {
+                w.created_at
+            }
             WebhookEvent::ResponseCancelled(w) => w.created_at,
             WebhookEvent::ResponseCompleted(w) => w.created_at,
             WebhookEvent::ResponseFailed(w) => w.created_at,

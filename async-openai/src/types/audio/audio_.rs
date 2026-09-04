@@ -120,6 +120,12 @@ pub struct CreateTranscriptionRequest {
     /// accuracy and latency.
     pub language: Option<String>,
 
+    /// Possible input languages in ISO-639-1 format. Supported by `gpt-transcribe`.
+    pub languages: Option<Vec<String>>,
+
+    /// Words or phrases that should guide transcription. Supported by `gpt-transcribe`.
+    pub keywords: Option<Vec<String>>,
+
     /// An optional text to guide the model's style or continue a previous audio segment. The
     /// [prompt](https://platform.openai.com/docs/guides/speech-to-text#prompting) should match the audio
     /// language. This field is not supported when using `gpt-4o-transcribe-diarize`.
@@ -227,12 +233,22 @@ pub struct CreateTranscriptionResponseJson {
     /// The transcribed text.
     pub text: String,
 
+    /// Languages detected in the audio. Returned by `gpt-transcribe`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub languages: Option<Vec<TranscriptionLanguage>>,
+
     /// The log probabilities of the tokens in the transcription. Only returned with the models
     /// `gpt-4o-transcribe` and `gpt-4o-mini-transcribe` if `logprobs` is added to the `include` array.
     pub logprobs: Option<Vec<LogProbProperties>>,
 
     /// Token usage statistics for the request.
     pub usage: TranscriptionUsage,
+}
+
+/// A language detected in transcribed audio.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+pub struct TranscriptionLanguage {
+    pub code: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

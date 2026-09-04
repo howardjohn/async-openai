@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::responses::{OutputContent, OutputItem, Response, ResponseLogProb, SummaryPart};
+use crate::types::responses::{
+    Annotation, FunctionShellCallOutputContent, OutputContent, OutputItem, Response,
+    ResponseLogProb, SummaryPart,
+};
 
 /// Event types for streaming responses from the Responses API
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -51,6 +54,21 @@ pub enum ResponseStreamEvent {
     /// Emitted when function-call arguments are finalized.
     #[serde(rename = "response.function_call_arguments.done")]
     ResponseFunctionCallArgumentsDone(ResponseFunctionCallArgumentsDoneEvent),
+    /// Emitted when a shell command is added to a tool call.
+    #[serde(rename = "response.shell_call_command.added")]
+    ResponseShellCallCommandAdded(ResponseShellCallCommandAddedEvent),
+    /// Emitted when a shell command is incrementally updated.
+    #[serde(rename = "response.shell_call_command.delta")]
+    ResponseShellCallCommandDelta(ResponseShellCallCommandDeltaEvent),
+    /// Emitted when a shell command is complete.
+    #[serde(rename = "response.shell_call_command.done")]
+    ResponseShellCallCommandDone(ResponseShellCallCommandDoneEvent),
+    /// Emitted when shell output content is incrementally added.
+    #[serde(rename = "response.shell_call_output_content.delta")]
+    ResponseShellCallOutputContentDelta(ResponseShellCallOutputContentDeltaEvent),
+    /// Emitted when shell output content is complete.
+    #[serde(rename = "response.shell_call_output_content.done")]
+    ResponseShellCallOutputContentDone(ResponseShellCallOutputContentDoneEvent),
     /// Emitted when a file search call is initiated.
     #[serde(rename = "response.file_search_call.in_progress")]
     ResponseFileSearchCallInProgress(ResponseFileSearchCallInProgressEvent),
@@ -275,6 +293,59 @@ pub struct ResponseFunctionCallArgumentsDoneEvent {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct ResponseShellCallCommandAddedEvent {
+    pub sequence_number: u64,
+    pub output_index: u32,
+    pub command_index: u32,
+    pub command: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct ResponseShellCallCommandDeltaEvent {
+    pub sequence_number: u64,
+    pub output_index: u32,
+    pub command_index: u32,
+    pub delta: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub obfuscation: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct ResponseShellCallCommandDoneEvent {
+    pub sequence_number: u64,
+    pub output_index: u32,
+    pub command_index: u32,
+    pub command: String,
+}
+
+/// A stdout/stderr fragment emitted while a shell command is running.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Default)]
+pub struct ShellCallOutputDelta {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stdout: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stderr: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct ResponseShellCallOutputContentDeltaEvent {
+    pub sequence_number: u64,
+    pub item_id: String,
+    pub output_index: u32,
+    pub command_index: u32,
+    pub delta: ShellCallOutputDelta,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct ResponseShellCallOutputContentDoneEvent {
+    pub sequence_number: u64,
+    pub item_id: String,
+    pub output_index: u32,
+    pub command_index: u32,
+    pub output: Vec<FunctionShellCallOutputContent>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ResponseFileSearchCallInProgressEvent {
     pub sequence_number: u64,
     pub output_index: u32,
@@ -407,6 +478,14 @@ pub struct ResponseImageGenCallPartialImageEvent {
     pub item_id: String,
     pub partial_image_index: u32,
     pub partial_image_b64: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub size: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub quality: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub background: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub output_format: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -511,7 +590,7 @@ pub struct ResponseOutputTextAnnotationAddedEvent {
     pub content_index: u32,
     pub annotation_index: u32,
     pub item_id: String,
-    pub annotation: serde_json::Value,
+    pub annotation: Option<Annotation>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -580,6 +659,11 @@ impl_event_type! {
     ResponseRefusalDoneEvent => "response.refusal.done",
     ResponseFunctionCallArgumentsDeltaEvent => "response.function_call_arguments.delta",
     ResponseFunctionCallArgumentsDoneEvent => "response.function_call_arguments.done",
+    ResponseShellCallCommandAddedEvent => "response.shell_call_command.added",
+    ResponseShellCallCommandDeltaEvent => "response.shell_call_command.delta",
+    ResponseShellCallCommandDoneEvent => "response.shell_call_command.done",
+    ResponseShellCallOutputContentDeltaEvent => "response.shell_call_output_content.delta",
+    ResponseShellCallOutputContentDoneEvent => "response.shell_call_output_content.done",
     ResponseFileSearchCallInProgressEvent => "response.file_search_call.in_progress",
     ResponseFileSearchCallSearchingEvent => "response.file_search_call.searching",
     ResponseFileSearchCallCompletedEvent => "response.file_search_call.completed",
@@ -635,6 +719,11 @@ impl crate::traits::EventType for ResponseStreamEvent {
             ResponseStreamEvent::ResponseRefusalDone(event) => event.event_type(),
             ResponseStreamEvent::ResponseFunctionCallArgumentsDelta(event) => event.event_type(),
             ResponseStreamEvent::ResponseFunctionCallArgumentsDone(event) => event.event_type(),
+            ResponseStreamEvent::ResponseShellCallCommandAdded(event) => event.event_type(),
+            ResponseStreamEvent::ResponseShellCallCommandDelta(event) => event.event_type(),
+            ResponseStreamEvent::ResponseShellCallCommandDone(event) => event.event_type(),
+            ResponseStreamEvent::ResponseShellCallOutputContentDelta(event) => event.event_type(),
+            ResponseStreamEvent::ResponseShellCallOutputContentDone(event) => event.event_type(),
             ResponseStreamEvent::ResponseFileSearchCallInProgress(event) => event.event_type(),
             ResponseStreamEvent::ResponseFileSearchCallSearching(event) => event.event_type(),
             ResponseStreamEvent::ResponseFileSearchCallCompleted(event) => event.event_type(),

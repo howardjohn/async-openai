@@ -13,6 +13,8 @@ pub mod project_service_accounts;
 pub mod project_users;
 pub mod projects;
 pub mod roles;
+pub mod safety_alerts;
 pub mod spend_alerts;
+pub mod spend_limits;
 pub mod usage;
 pub mod users;

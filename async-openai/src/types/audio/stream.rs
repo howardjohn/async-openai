@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::audio::{LogProbProperties, TranscriptTextUsageTokens};
+use crate::types::audio::{LogProbProperties, TranscriptTextUsageTokens, TranscriptionLanguage};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -66,6 +66,9 @@ pub struct TranscriptionTextDeltaEvent {
 pub struct TranscriptionTextDoneEvent {
     /// The text that was transcribed.
     pub text: String,
+    /// Languages detected in the audio. Returned by `gpt-transcribe`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub languages: Option<Vec<TranscriptionLanguage>>,
     /// The log probabilities of the individual tokens in the transcription.
     /// Only included if you [create a transcription](https://platform.openai.com/docs/api-reference/audio/create-transcription) with
     /// the `include[]` parameter set to `logprobs`.

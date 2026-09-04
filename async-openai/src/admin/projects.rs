@@ -6,8 +6,8 @@ use crate::{
     },
     Client, ProjectAPIKeys, ProjectCertificates, ProjectDataRetentionSettings, ProjectGroupRoles,
     ProjectGroups, ProjectHostedToolPermissionsApi, ProjectModelPermissionsApi, ProjectRateLimits,
-    ProjectRoles, ProjectServiceAccounts, ProjectSpendAlerts, ProjectUserRoles, ProjectUsers,
-    RequestOptions,
+    ProjectRoles, ProjectServiceAccounts, ProjectSpendAlerts, ProjectSpendLimits, ProjectUserRoles,
+    ProjectUsers, RequestOptions,
 };
 
 /// Manage the projects within an organization includes creation, updating, and archiving or projects.
@@ -91,6 +91,11 @@ impl<'c, C: Config> Projects<'c, C> {
     /// Manage spend alerts for a project.
     pub fn spend_alerts(&self, project_id: &str) -> ProjectSpendAlerts<'_, C> {
         ProjectSpendAlerts::new(self.client, project_id)
+    }
+
+    /// Manage the hard spend limit for a project.
+    pub fn spend_limit(&self, project_id: &str) -> ProjectSpendLimits<'_, C> {
+        ProjectSpendLimits::new(self.client, project_id)
     }
 
     /// Returns a list of projects.

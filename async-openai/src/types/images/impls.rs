@@ -49,6 +49,7 @@ impl Display for ImageModel {
             "{}",
             match self {
                 Self::GptImage2 => "gpt-image-2",
+                Self::GptImage2_20260421 => "gpt-image-2-2026-04-21",
                 Self::DallE2 => "dall-e-2",
                 Self::DallE3 => "dall-e-3",
                 Self::GptImage1 => "gpt-image-1",

@@ -81,6 +81,12 @@ pub struct ApiError {
     pub r#type: Option<String>,
     pub param: Option<String>,
     pub code: Option<String>,
+    /// Response headers included in streaming/WebSocket error payloads.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub headers: Option<Box<std::collections::HashMap<String, String>>>,
+    /// Details supplied for a misalignment policy error.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub misalignment: Option<Box<serde_json::Value>>,
 }
 
 impl std::fmt::Display for ApiError {

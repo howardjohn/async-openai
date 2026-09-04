@@ -4,11 +4,13 @@ mod impls;
 mod response;
 mod sdk;
 mod stream;
+mod websocket;
 
 pub use api::*;
 pub use conversation::*;
 pub use response::*;
 pub use stream::*;
+pub use websocket::*;
 
 // Re-export shared types
 pub use crate::types::shared::ComparisonFilter;

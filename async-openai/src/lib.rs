@@ -265,6 +265,8 @@ pub mod middleware;
 mod model;
 #[cfg(feature = "moderation")]
 mod moderation;
+#[cfg(feature = "provenance")]
+mod provenance;
 #[cfg(feature = "realtime")]
 mod realtime;
 #[cfg(feature = "_api")]
@@ -289,7 +291,8 @@ mod uploads;
     feature = "image",
     feature = "video",
     feature = "container",
-    feature = "skill"
+    feature = "skill",
+    feature = "provenance"
 ))]
 mod util;
 #[cfg(feature = "vectorstore")]
@@ -305,8 +308,8 @@ pub use admin::{
     Admin, AdminAPIKeys, AuditLogs, Certificates, DataRetention, GroupRoles, GroupUsers, Groups,
     Invites, ProjectAPIKeys, ProjectCertificates, ProjectDataRetentionSettings, ProjectGroupRoles,
     ProjectGroups, ProjectHostedToolPermissionsApi, ProjectModelPermissionsApi, ProjectRateLimits,
-    ProjectRoles, ProjectServiceAccounts, ProjectSpendAlerts, ProjectUserRoles, ProjectUsers,
-    Projects, Roles, SpendAlerts, Usage, UserRoles, Users,
+    ProjectRoles, ProjectServiceAccounts, ProjectSpendAlerts, ProjectSpendLimits, ProjectUserRoles,
+    ProjectUsers, Projects, Roles, SafetyAlerts, SpendAlerts, SpendLimits, Usage, UserRoles, Users,
 };
 #[cfg(feature = "assistant")]
 #[deprecated(
@@ -342,6 +345,8 @@ pub use image::Images;
 pub use model::Models;
 #[cfg(feature = "moderation")]
 pub use moderation::Moderations;
+#[cfg(feature = "provenance")]
+pub use provenance::ContentProvenance;
 #[cfg(feature = "realtime")]
 pub use realtime::{Realtime, RealtimeTranslations};
 #[cfg(feature = "_api")]

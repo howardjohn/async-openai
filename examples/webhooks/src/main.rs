@@ -309,6 +309,19 @@ fn process_webhook_event(event: WebhookEvent) {
             }
             info!("   Event created at: {}", webhook.created_at);
         }
+        WebhookEvent::LiveCallIncoming(webhook) => {
+            info!("📞 Live Call Incoming");
+            info!("   Session ID: {}", webhook.data.session_id);
+            info!("   Event created at: {}", webhook.created_at);
+        }
+
+        // Safety events
+        WebhookEvent::SafetyAlertCreated(webhook)
+        | WebhookEvent::SafetyOrgAlertCreated(webhook) => {
+            info!("🛡️ Safety Alert Created");
+            info!("   Alert ID: {}", webhook.data.id);
+            info!("   Event created at: {}", webhook.created_at);
+        }
 
         // Response events (for background responses)
         WebhookEvent::ResponseCancelled(webhook) => {

@@ -61,6 +61,7 @@ fn reasoning_then_function_call_round_trip_for_input() {
         id: Some("fc_pair".into()),
         status: None,
         caller: None,
+        r#async: None,
     };
 
     let output = vec![
@@ -80,7 +81,9 @@ fn function_call_output_resource_drops_required_id_into_optional() {
     // the input-side `*ItemParam` has both as Option. Conversion should
     // wrap them in Some so an echoed-back item carries the same identity.
     let resource = FunctionToolCallOutputResource {
-        call_id: "call_42".into(),
+        call_id: Some("call_42".into()),
+        name: Some("lookup".into()),
+        namespace: None,
         output: FunctionCallOutput::Text("ok".into()),
         id: "fco_42".into(),
         status: FunctionCallOutputStatusEnum::Completed,
@@ -91,7 +94,7 @@ fn function_call_output_resource_drops_required_id_into_optional() {
     let item: Item = OutputItem::FunctionCallOutput(resource).into();
     match item {
         Item::FunctionCallOutput(p) => {
-            assert_eq!(p.call_id, "call_42");
+            assert_eq!(p.call_id.as_deref(), Some("call_42"));
             assert_eq!(p.id.as_deref(), Some("fco_42"));
             assert!(p.status.is_some());
         }

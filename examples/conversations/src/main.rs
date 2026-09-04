@@ -156,6 +156,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             ConversationItem::ApplyPatchCallOutput(apply_patch_call_output) => {
                 apply_patch_call_output.id
             }
+            ConversationItem::ConfigurationUpdate(configuration_update) => configuration_update.id,
         };
 
         let conversation_resource = client

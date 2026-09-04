@@ -37,7 +37,8 @@ pub mod images;
     feature = "container-types",
     feature = "skill-types",
     feature = "chat-completion-types",
-    feature = "realtime-types"
+    feature = "realtime-types",
+    feature = "provenance-types"
 ))]
 mod input_source;
 #[cfg(any(feature = "response-types", feature = "realtime-types"))]
@@ -60,6 +61,8 @@ mod metadata;
 pub mod models;
 #[cfg(feature = "moderation-types")]
 pub mod moderations;
+#[cfg(feature = "provenance-types")]
+pub mod provenance;
 #[cfg_attr(docsrs, doc(cfg(feature = "realtime-types")))]
 #[cfg(feature = "realtime-types")]
 pub mod realtime;
@@ -100,7 +103,8 @@ pub mod webhooks;
     feature = "container-types",
     feature = "skill-types",
     feature = "chat-completion-types",
-    feature = "realtime-types"
+    feature = "realtime-types",
+    feature = "provenance-types"
 ))]
 pub use input_source::*;
 
