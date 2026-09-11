@@ -258,10 +258,11 @@ pub enum Role {
 }
 
 /// Status of input/output items.
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum OutputStatus {
     InProgress,
+    #[default]
     Completed,
     Incomplete,
 }
@@ -2034,7 +2035,8 @@ pub struct ResponseLogProb {
 /// A simple text output from the model.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct OutputTextContent {
-    /// The annotations of the text output.
+    /// The annotations of the text output. Defaults to empty for replayed input.
+    #[serde(default)]
     pub annotations: Vec<Annotation>,
     pub logprobs: Option<Vec<LogProb>>,
     /// The text output from the model.
@@ -2128,6 +2130,8 @@ pub struct OutputMessage {
     pub phase: Option<MessagePhase>,
     /// The status of the message input. One of `in_progress`, `completed`, or
     /// `incomplete`. Populated when input items are returned via API.
+    /// Defaults to completed for replayed messages without a status.
+    #[serde(default)]
     pub status: OutputStatus,
     ///// The type of the output message. Always `message`.
     //pub r#type: MessageType,
