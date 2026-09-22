@@ -6,6 +6,7 @@ pub struct InputTokenDetails {
     /// [More on prompt caching](https://platform.openai.com/docs/guides/prompt-caching).
     pub cached_tokens: u32,
     /// The number of tokens written to the prompt cache.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cache_write_tokens: Option<u32>,
 }
 

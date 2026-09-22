@@ -13,7 +13,7 @@ use async_openai::types::responses::{
 use serde_json::json;
 
 #[test]
-fn input_token_details_without_cache_write_tokens_deserializes() {
+fn input_token_details_omits_absent_cache_write_tokens() {
     let details: InputTokenDetails = serde_json::from_value(json!({
         "cached_tokens": 42
     }))
@@ -21,6 +21,16 @@ fn input_token_details_without_cache_write_tokens_deserializes() {
 
     assert_eq!(details.cached_tokens, 42);
     assert_eq!(details.cache_write_tokens, None);
+    assert_eq!(serde_json::to_value(&details).unwrap(), json!({"cached_tokens": 42}));
+
+    let details = InputTokenDetails {
+        cached_tokens: 42,
+        cache_write_tokens: Some(0),
+    };
+    assert_eq!(
+        serde_json::to_value(&details).unwrap(),
+        json!({"cached_tokens": 42, "cache_write_tokens": 0})
+    );
 }
 
 #[test]
