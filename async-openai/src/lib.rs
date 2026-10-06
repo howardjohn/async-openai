@@ -278,6 +278,8 @@ pub(crate) use async_openai_macros::byot_passthrough as byot;
 
 #[cfg(feature = "administration")]
 mod admin;
+#[cfg(feature = "agents")]
+mod agents;
 #[cfg(feature = "audio")]
 mod audio;
 #[cfg(feature = "batch")]
@@ -311,6 +313,8 @@ mod fine_tuning;
 mod image;
 #[cfg(feature = "_api")]
 mod impls;
+#[cfg(feature = "live")]
+mod live;
 #[cfg(feature = "middleware")]
 pub mod middleware;
 #[cfg(feature = "model")]
@@ -345,6 +349,8 @@ mod uploads;
     feature = "skill"
 ))]
 mod util;
+#[cfg(feature = "vault")]
+mod vaults;
 #[cfg(feature = "vectorstore")]
 mod vectorstores;
 #[cfg(feature = "video")]
@@ -362,6 +368,8 @@ pub use admin::{
     ProjectRateLimits, ProjectRoles, ProjectServiceAccounts, ProjectSpendAlerts, ProjectSpendLimit,
     ProjectUserRoles, ProjectUsers, Projects, Roles, Usage, UserRoles, Users,
 };
+#[cfg(feature = "agents")]
+pub use agents::{AgentEnvironmentTemplates, AgentEnvironments, AgentSessions, Agents};
 #[cfg(feature = "audio")]
 #[allow(deprecated)]
 pub use audio::{Audio, Speech, Transcriptions, Translations};
@@ -387,6 +395,8 @@ pub use file::Files;
 pub use fine_tuning::FineTuning;
 #[cfg(feature = "image")]
 pub use image::Images;
+#[cfg(feature = "live")]
+pub use live::Live;
 #[cfg(feature = "model")]
 pub use model::Models;
 #[cfg(feature = "moderation")]
@@ -401,6 +411,8 @@ pub use responses::{ConversationItems, Conversations, Responses};
 pub use skills::{SkillVersions, Skills};
 #[cfg(feature = "upload")]
 pub use uploads::Uploads;
+#[cfg(feature = "vault")]
+pub use vaults::{VaultCredentials, Vaults};
 #[cfg(feature = "vectorstore")]
 pub use vectorstores::{VectorStoreFileBatches, VectorStoreFiles, VectorStores};
 #[cfg(feature = "video")]

@@ -39,6 +39,8 @@ pub mod images;
     feature = "realtime-types"
 ))]
 mod input_source;
+#[cfg(feature = "live-types")]
+pub mod live;
 #[cfg(any(feature = "response-types", feature = "realtime-types"))]
 pub mod mcp;
 #[cfg(any(
@@ -71,6 +73,8 @@ pub mod skills;
 pub mod stream;
 #[cfg(feature = "upload-types")]
 pub mod uploads;
+#[cfg(feature = "vault-types")]
+pub mod vaults;
 #[cfg(feature = "vectorstore-types")]
 pub mod vectorstores;
 #[cfg(feature = "video-types")]
@@ -131,6 +135,7 @@ mod impls;
     feature = "embedding-types",
     feature = "moderation-types",
     feature = "administration-types",
+    feature = "vault-types",
 ))]
 impl From<derive_builder::UninitializedFieldError> for crate::error::OpenAIError {
     fn from(value: derive_builder::UninitializedFieldError) -> Self {
@@ -141,6 +146,8 @@ impl From<derive_builder::UninitializedFieldError> for crate::error::OpenAIError
 #[cfg(feature = "safety-types")]
 pub mod safety;
 
+#[cfg(feature = "agent-types")]
+pub mod agents;
 #[cfg(feature = "content-provenance-checks-types")]
 pub mod content_provenance_checks;
 

@@ -45,6 +45,8 @@ use crate::file::Files;
 use crate::image::Images;
 #[cfg(feature = "moderation")]
 use crate::moderation::Moderations;
+#[cfg(feature = "agents")]
+use crate::Agents;
 #[cfg(feature = "audio")]
 use crate::Audio;
 #[cfg(feature = "batch")]
@@ -65,6 +67,8 @@ use crate::Embeddings;
 use crate::Evals;
 #[cfg(feature = "finetuning")]
 use crate::FineTuning;
+#[cfg(feature = "live")]
+use crate::Live;
 #[cfg(feature = "model")]
 use crate::Models;
 #[cfg(feature = "realtime")]
@@ -77,6 +81,8 @@ use crate::Safety;
 use crate::Skills;
 #[cfg(feature = "upload")]
 use crate::Uploads;
+#[cfg(feature = "vault")]
+use crate::Vaults;
 #[cfg(feature = "vectorstore")]
 use crate::VectorStores;
 #[cfg(feature = "video")]
@@ -188,10 +194,22 @@ impl<C: Config> Client<C> {
 
     // API groups
 
+    /// To call [Agents] APIs using this client.
+    #[cfg(feature = "agents")]
+    pub fn agents(&self) -> Agents<'_, C> {
+        Agents::new(self)
+    }
+
     /// To call [Models] group related APIs using this client.
     #[cfg(feature = "model")]
     pub fn models(&self) -> Models<'_, C> {
         Models::new(self)
+    }
+
+    /// To call [Live] APIs using this client.
+    #[cfg(feature = "live")]
+    pub fn live(&self) -> Live<'_, C> {
+        Live::new(self)
     }
 
     /// To call [Completions] group related APIs using this client.
@@ -260,6 +278,12 @@ impl<C: Config> Client<C> {
     #[cfg(feature = "vectorstore")]
     pub fn vector_stores(&self) -> VectorStores<'_, C> {
         VectorStores::new(self)
+    }
+
+    /// To call [Vaults] APIs using this client.
+    #[cfg(feature = "vault")]
+    pub fn vaults(&self) -> Vaults<'_, C> {
+        Vaults::new(self)
     }
 
     /// To call [Batches] group related APIs using this client.

@@ -244,6 +244,13 @@ fn process_webhook_event(event: WebhookEvent) {
     info!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
     match event {
+        WebhookEvent::AgentSessionCreated(e) => info!("Agent session created: {e:?}"),
+        WebhookEvent::AgentSessionInProgress(e) => info!("Agent session in progress: {e:?}"),
+        WebhookEvent::AgentSessionIdle(e) => info!("Agent session idle: {e:?}"),
+        WebhookEvent::AgentSessionFailed(e) => info!("Agent session failed: {e:?}"),
+        WebhookEvent::AgentSessionActionRequired(e) => {
+            info!("Agent session action required: {e:?}")
+        }
         WebhookEvent::WebhookSafetyWarningIssued(e) => {
             info!("Safety warning issued; case ID: {}", e.data.id);
         }

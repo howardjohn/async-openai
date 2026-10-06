@@ -121,6 +121,7 @@ mod tests {
         let retrieved_file = client.files().retrieve(&openai_file.id).await.unwrap();
 
         assert_eq!(openai_file.created_at, retrieved_file.created_at);
+        assert_eq!(openai_file.bytes, Some(contents.len() as u64));
         assert_eq!(openai_file.bytes, retrieved_file.bytes);
         assert_eq!(openai_file.filename, retrieved_file.filename);
         assert_eq!(openai_file.purpose, retrieved_file.purpose);

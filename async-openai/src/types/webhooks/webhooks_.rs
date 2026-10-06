@@ -472,9 +472,37 @@ pub struct WebhookSafetyDeactivationIssuedData {
 
 // EventType and EventId implementations for response events
 
+macro_rules! webhook_event_struct {
+    ($name:ident, $data:ty) => {
+        #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+        pub struct $name {
+            pub id: String,
+            pub object: String,
+            pub created_at: u64,
+            pub data: $data,
+        }
+    };
+}
+
+webhook_event_struct!(WebhookAgentSessionCreated, serde_json::Value);
+webhook_event_struct!(WebhookAgentSessionInProgress, serde_json::Value);
+webhook_event_struct!(WebhookAgentSessionIdle, serde_json::Value);
+webhook_event_struct!(WebhookAgentSessionFailed, serde_json::Value);
+webhook_event_struct!(WebhookAgentSessionActionRequired, serde_json::Value);
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(tag = "type")]
 pub enum WebhookEvent {
+    #[serde(rename = "agent.session.created")]
+    AgentSessionCreated(WebhookAgentSessionCreated),
+    #[serde(rename = "agent.session.in_progress")]
+    AgentSessionInProgress(WebhookAgentSessionInProgress),
+    #[serde(rename = "agent.session.idle")]
+    AgentSessionIdle(WebhookAgentSessionIdle),
+    #[serde(rename = "agent.session.failed")]
+    AgentSessionFailed(WebhookAgentSessionFailed),
+    #[serde(rename = "agent.session.action_required")]
+    AgentSessionActionRequired(WebhookAgentSessionActionRequired),
     #[serde(rename = "batch.cancelled")]
     BatchCancelled(WebhookBatchCancelled),
 
@@ -569,6 +597,11 @@ macro_rules! impl_event_id {
 // Use the macro to implement EventType for all webhook event structs
 #[cfg(feature = "_api")]
 impl_event_type! {
+    WebhookAgentSessionCreated => "agent.session.created",
+    WebhookAgentSessionInProgress => "agent.session.in_progress",
+    WebhookAgentSessionIdle => "agent.session.idle",
+    WebhookAgentSessionFailed => "agent.session.failed",
+    WebhookAgentSessionActionRequired => "agent.session.action_required",
     WebhookSafetyDeactivationIssued => "safety.deactivation_issued",
     WebhookSafetyWarningIssued => "safety.warning_issued",
     WebhookLiveCallIncoming => "live.call.incoming",
@@ -595,6 +628,11 @@ impl_event_type! {
 // Use the macro to implement EventId for all webhook event structs
 #[cfg(feature = "_api")]
 impl_event_id! {
+    WebhookAgentSessionCreated,
+    WebhookAgentSessionInProgress,
+    WebhookAgentSessionIdle,
+    WebhookAgentSessionFailed,
+    WebhookAgentSessionActionRequired,
     WebhookSafetyDeactivationIssued,
     WebhookSafetyWarningIssued,
     WebhookLiveCallIncoming,
@@ -623,6 +661,11 @@ impl_event_id! {
 impl crate::traits::EventType for WebhookEvent {
     fn event_type(&self) -> &'static str {
         match self {
+            Self::AgentSessionCreated(e) => e.event_type(),
+            Self::AgentSessionInProgress(e) => e.event_type(),
+            Self::AgentSessionIdle(e) => e.event_type(),
+            Self::AgentSessionFailed(e) => e.event_type(),
+            Self::AgentSessionActionRequired(e) => e.event_type(),
             Self::WebhookSafetyWarningIssued(e) => e.event_type(),
             Self::WebhookSafetyDeactivationIssued(e) => e.event_type(),
             Self::WebhookLiveCallIncoming(e) => e.event_type(),
@@ -652,6 +695,11 @@ impl crate::traits::EventType for WebhookEvent {
 impl crate::traits::EventId for WebhookEvent {
     fn event_id(&self) -> &str {
         match self {
+            Self::AgentSessionCreated(e) => e.event_id(),
+            Self::AgentSessionInProgress(e) => e.event_id(),
+            Self::AgentSessionIdle(e) => e.event_id(),
+            Self::AgentSessionFailed(e) => e.event_id(),
+            Self::AgentSessionActionRequired(e) => e.event_id(),
             Self::WebhookSafetyWarningIssued(e) => e.event_id(),
             Self::WebhookSafetyDeactivationIssued(e) => e.event_id(),
             Self::WebhookLiveCallIncoming(e) => e.event_id(),
@@ -681,6 +729,11 @@ impl WebhookEvent {
     /// Get the timestamp when the event was created
     pub fn created_at(&self) -> u64 {
         match self {
+            Self::AgentSessionCreated(e) => e.created_at,
+            Self::AgentSessionInProgress(e) => e.created_at,
+            Self::AgentSessionIdle(e) => e.created_at,
+            Self::AgentSessionFailed(e) => e.created_at,
+            Self::AgentSessionActionRequired(e) => e.created_at,
             Self::WebhookSafetyWarningIssued(e) => e.created_at,
             Self::WebhookSafetyDeactivationIssued(e) => e.created_at,
             Self::WebhookLiveCallIncoming(e) => e.created_at,
