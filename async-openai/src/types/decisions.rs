@@ -240,7 +240,7 @@ pub enum DecisionInput {
     Items(Vec<DecisionInputItem>),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum DecisionInputItem {
     Message(DecisionInputMessage),
@@ -248,6 +248,55 @@ pub enum DecisionInputItem {
     FunctionCallOutput(DecisionInputFunctionCallOutput),
     CustomToolCall(DecisionInputCustomToolCall),
     CustomToolCallOutput(DecisionInputCustomToolCallOutput),
+}
+
+impl<'de> Deserialize<'de> for DecisionInputItem {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(tag = "type", rename_all = "snake_case")]
+        enum TaggedItem {
+            Message(DecisionInputMessage),
+            FunctionCall(DecisionInputFunctionCall),
+            FunctionCallOutput(DecisionInputFunctionCallOutput),
+            CustomToolCall(DecisionInputCustomToolCall),
+            CustomToolCallOutput(DecisionInputCustomToolCallOutput),
+        }
+
+        #[derive(Deserialize, Default)]
+        #[serde(rename_all = "snake_case")]
+        enum MessageType {
+            #[default]
+            Message,
+        }
+
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum InputItem {
+            Tagged(TaggedItem),
+            Message {
+                #[serde(default, rename = "type")]
+                _type: MessageType,
+                #[serde(flatten)]
+                message: DecisionInputMessage,
+            },
+        }
+
+        Ok(match InputItem::deserialize(deserializer)? {
+            InputItem::Tagged(TaggedItem::Message(message))
+            | InputItem::Message { message, .. } => Self::Message(message),
+            InputItem::Tagged(TaggedItem::FunctionCall(call)) => Self::FunctionCall(call),
+            InputItem::Tagged(TaggedItem::FunctionCallOutput(output)) => {
+                Self::FunctionCallOutput(output)
+            }
+            InputItem::Tagged(TaggedItem::CustomToolCall(call)) => Self::CustomToolCall(call),
+            InputItem::Tagged(TaggedItem::CustomToolCallOutput(output)) => {
+                Self::CustomToolCallOutput(output)
+            }
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -467,5 +516,29 @@ impl From<&str> for DecisionInput {
 impl Default for DecisionInput {
     fn default() -> Self {
         Self::Text(Default::default())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn decision_input_message_accepts_missing_or_explicit_type() {
+        let without_type = serde_json::json!({
+            "role": "user",
+            "content": [{"type": "input_text", "text": "hello"}]
+        });
+        let mut with_type = without_type.clone();
+        with_type["type"] = serde_json::json!("message");
+
+        let implicit: DecisionInputItem = serde_json::from_value(without_type).unwrap();
+        let explicit: DecisionInputItem = serde_json::from_value(with_type.clone()).unwrap();
+
+        assert_eq!(implicit, explicit);
+        assert_eq!(serde_json::to_value(implicit).unwrap(), with_type);
+
+        with_type["type"] = serde_json::json!("unknown");
+        assert!(serde_json::from_value::<DecisionInputItem>(with_type).is_err());
     }
 }
