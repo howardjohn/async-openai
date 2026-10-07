@@ -1999,7 +1999,8 @@ pub struct RefusalContent {
 pub struct OutputMessage {
     /// The content of the output message.
     pub content: Vec<OutputMessageContent>,
-    /// The unique ID of the output message.
+    /// The unique ID of the output message. Defaults to empty for replayed messages without an id.
+    #[serde(default)]
     pub id: String,
     /// The role of the output message. Always `assistant`.
     pub role: AssistantRole,
