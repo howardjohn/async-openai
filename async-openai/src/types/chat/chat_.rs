@@ -1142,7 +1142,8 @@ pub struct FunctionCallStream {
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct ChatCompletionMessageToolCallChunk {
-    pub index: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub index: Option<u32>,
     /// The ID of the tool call.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
