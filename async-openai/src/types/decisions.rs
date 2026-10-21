@@ -3,9 +3,11 @@ use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
 pub use crate::types::shared::{
+    CacheWriteTokenDetails, InputTokenDetails, OutputTokenDetails, ResponseUsage,
+};
+pub use crate::types::shared::{
     ImageDetail as ImageDetailParam, MessagePhase as MessagePhaseParam,
 };
-pub use crate::types::shared::{InputTokenDetails, OutputTokenDetails, ResponseUsage};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct DecisionResponse {

@@ -11,6 +11,7 @@ pub use response::*;
 pub use stream::*;
 
 // Re-export shared types
+pub use crate::types::shared::CacheWriteTokenDetails;
 pub use crate::types::shared::ComparisonFilter;
 pub use crate::types::shared::ComparisonType;
 pub use crate::types::shared::CompletionTokensDetails;
