@@ -20,7 +20,7 @@ pub use crate::types::shared::CustomGrammarFormatParam;
 pub use crate::types::shared::Filter;
 pub use crate::types::shared::GrammarSyntax;
 pub use crate::types::shared::ImageDetail;
-pub use crate::types::shared::InputTokenDetails;
+pub use crate::types::shared::{CacheWriteTokenDetails, InputTokenDetails};
 pub use crate::types::shared::OutputTokenDetails;
 pub use crate::types::shared::PromptTokensDetails;
 pub use crate::types::shared::ReasoningEffort;
